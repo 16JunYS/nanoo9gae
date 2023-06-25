@@ -1,6 +1,11 @@
 spring:
-  config:
-    activate:
-      on-profile: local
-enabled: true
+  profiles:
+    active: local
+
+---
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+
 
