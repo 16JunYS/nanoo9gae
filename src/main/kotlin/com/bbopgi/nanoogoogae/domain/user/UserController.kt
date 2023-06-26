@@ -18,6 +18,11 @@ class UserController(
     @Autowired val repo: UserRepository
 ) {
 
+    val mockUser1 = User("id1",
+        "anonymousNickname",
+        "passwd",
+    "01012341234",
+        5)
     @PostMapping("/user")
     fun createAccount(@RequestBody user: User) {
         val user = repo.insert(user)
@@ -29,17 +34,21 @@ class UserController(
     @Operation(summary = "유저 ID로 유저 정보 조회")
     @GetMapping("/user")
     fun getUser(@RequestParam id: String): ResponseEntity<User?> {
+        return ResponseEntity(mockUser1, HttpStatus.OK);
+
         val user = repo.findByUserId(id)
         val statusCode =
             if (user != null) HttpStatus.OK
             else HttpStatus.INTERNAL_SERVER_ERROR
 
-        return ResponseEntity(user, statusCode)
+//        return ResponseEntity(user, statusCode)
     }
 
     @Operation(summary = "유저 삭제(탈퇴)")
     @DeleteMapping("/user")
-    fun deleteUser(@RequestParam id: String) = repo.deleteByUserId(id);
+    fun deleteUser(@RequestParam id: String) {
+        repo.deleteByUserId(id)
+    };
 
     fun getAllUsers() = repo.findAll()
 
