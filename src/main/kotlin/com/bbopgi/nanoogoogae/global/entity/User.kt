@@ -1,4 +1,4 @@
-package com.bbopgi.nanoogoogae.domain.user
+package com.bbopgi.nanoogoogae.global.entity
 
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.mongodb.core.mapping.Document
