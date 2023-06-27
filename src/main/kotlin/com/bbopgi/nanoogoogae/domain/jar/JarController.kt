@@ -14,6 +14,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/jar")
+@CrossOrigin(origins = ["*"])
 class JarController(
     private val jarService: JarService,
     private val capsuleService: CapsuleService,
