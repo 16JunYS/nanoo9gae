@@ -13,25 +13,27 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @Tag(name="User controller", description = "유저 관리 API")
 class UserController(
+    private val userService: UserService,
+    // TEmp
     @Autowired val repo: UserRepository
 ) {
 
-    val mockUser1 = User("id1",
+    val mockUser1 = UserDto("id1",
         "anonymousNickname",
         "passwd",
     "01012341234",
-        5)
+        5
+    )
     @PostMapping("/user")
-    fun createAccount(@RequestBody user: User) {
-        val user = repo.insert(user)
+    fun createAccount(@RequestBody payload: User): ResponseEntity<String> {
+        val userId = repo.insert(payload)?.userId
 
-        if (user == null) ResponseEntity<Unit>(HttpStatus.INTERNAL_SERVER_ERROR)
-        else ResponseEntity<String?>(user.userId, HttpStatus.CREATED)
+        return ResponseEntity<String>(userId, HttpStatus.CREATED)
     }
 
     @Operation(summary = "유저 ID로 유저 정보 조회")
     @GetMapping("/user")
-    fun getUser(@RequestParam id: String): ResponseEntity<User?> {
+    fun getUser(@RequestParam id: String): ResponseEntity<UserDto?> {
         return ResponseEntity(mockUser1, HttpStatus.OK);
 
         val user = repo.findByUserId(id)
@@ -46,13 +48,6 @@ class UserController(
     @DeleteMapping("/user")
     fun deleteUser(@RequestParam id: String) {
         repo.deleteByUserId(id)
-    };
-
-    fun getAllUsers() = repo.findAll()
-
-    @Operation(summary = "===임시 테스트 API 입니다.====")
-    @GetMapping("/{path1}")
-    fun temp(@PathVariable path1: String, @Parameter(description = "param1")param: String?):String {
-        return path1 + param
     }
+
 }

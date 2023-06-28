@@ -8,6 +8,7 @@ import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -87,8 +88,9 @@ class JarController(
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, gkeksdml CapsuleSaveRequest DTO 참고")
     fun replyCapsule(@PathVariable jarId: String,
                      @PathVariable capsuleId: String,
-                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Int> {
+        // Return CREATED  with 1 as response body
+        return ResponseEntity(1, HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")
