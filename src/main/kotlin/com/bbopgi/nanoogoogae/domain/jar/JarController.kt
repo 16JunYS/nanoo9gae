@@ -85,7 +85,9 @@ class JarController(
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, gkeksdml CapsuleSaveRequest DTO 참고")
-    fun replyCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Unit> {
+    fun replyCapsule(@PathVariable jarId: String,
+                     @PathVariable capsuleId: String,
+                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Unit> {
         return ResponseEntity.ok().build()
     }
 
