@@ -1,7 +1,9 @@
 package com.bbopgi.nanoogoogae.global.entity
 
+import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDto
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.util.Date
@@ -9,7 +11,7 @@ import java.util.Date
 @Document(collection = "capsule")
 data class Capsule(
     @Id
-    var capsuleId: Int,
+    var capsuleId: Long,
 
     @Field("author_nickname")
     var authorNickname: String,
@@ -34,11 +36,19 @@ data class Capsule(
     @Field("is_read")
     var isRead: Boolean = false,
 
-    @Field("is_replied")
-    var option_reply: Boolean = false,
-
-    var type: String,
+    @Field("reply_from")
+    var replyFrom: String? = null,
 
     var color: String,
+)
 
+fun Capsule.toDto() = CapsuleDto(
+    capsuleId = this.capsuleId,
+    authorNickname = this.authorNickname,
+    createdAt = this.createdAt,
+    emojiReply = this.emojiReply,
+    isPublic = this.isPrivate,
+    isRead = this.isRead,
+    type = if (this.replyFrom == null) "normal" else "reply",
+    color = this.color,
 )

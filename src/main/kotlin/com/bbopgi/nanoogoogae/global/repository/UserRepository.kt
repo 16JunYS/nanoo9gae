@@ -1,4 +1,4 @@
-package com.bbopgi.nanoogoogae.domain.user
+package com.bbopgi.nanoogoogae.global.repository
 
 import com.bbopgi.nanoogoogae.global.entity.User
 import org.springframework.data.mongodb.repository.MongoRepository

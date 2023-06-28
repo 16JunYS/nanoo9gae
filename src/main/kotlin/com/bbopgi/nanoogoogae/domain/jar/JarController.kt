@@ -22,13 +22,13 @@ class JarController(
 ) {
     val mockDataCapsule = CapsuleDto(
         capsuleId = 1,
-        authorNickname = "userNickname",
+        authorNickname = "user-nickname",
         createdAt = Date(),
-        isOpened = false,
         emojiReply = "[TBD] emojiReply",
-        isPrivate = false,
+        isPublic = false,
         isRead = false,
         type = "normal",
+        color = "red",
     )
 
     val mockData = JarDto(
@@ -46,25 +46,27 @@ class JarController(
         isPublic = false,
         isRead = false,
         type = "normal",
+        color = "red",
+        isReplied = false,
     )
-
-//    @Operation(summary = "( *사용X ) 유저가 회원가입하는 경우 백엔드 내부적으로 뽑기통 생성 로직을 넣을 예정이라 프론트에서 호출하지 않아도 되는 API 입니다.")
-//    @PostMapping
-//    fun create(@RequestBody payload: JarSaveRequest):ResponseEntity<Unit> {
-//        return ResponseEntity.ok().build()
-////        return ResponseEntity.ok(jarService.create(payload))
-//    }
-
+/*
+    @Operation(summary = "( *사용X ) 개발용 API.")
+    @PostMapping
+    fun create(@RequestBody payload: JarSaveRequest):ResponseEntity<Unit> {
+        return ReponseEntity.ok().build()
+//        return ResponseEntity.ok(jarService.create(payload))
+    }
+*/
     @GetMapping("/{jarId}")
     fun get(@PathVariable jarId: String): ResponseEntity<JarDto> {
+        return ResponseEntity.ok(jarService.getJar(jarId))
+    }
+/*
+    @Operation(summary = "유저 id에 해당하는 뽑기통 & 담겨진 캡슐 편지 정보 조회")
+    fun getByUserId(@RequestParam userId: String): ResponseEntity<JarDto> {
         return ResponseEntity.ok(mockData)
     }
-
-//    @Operation(summary = "유저 id에 해당하는 뽑기통 & 담겨진 캡슐 편지 정보 조회")
-//    fun getByUserId(@RequestParam userId: String): ResponseEntity<JarDto> {
-//        return ResponseEntity.ok(mockData)
-//    }
-
+*/
     @Operation(summary = "( *사용X ) 유저가 탈퇴하는 경우 내부적으로 삭제 로직 진행 예정")
     @DeleteMapping("/{jarId}")
     fun delete(@PathVariable jarId: String): ResponseEntity<Unit> {
