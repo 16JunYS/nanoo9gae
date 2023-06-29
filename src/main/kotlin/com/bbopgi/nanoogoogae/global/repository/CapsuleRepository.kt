@@ -13,7 +13,7 @@ interface CapsuleRepository: MongoRepository<Capsule, String> {
 
     fun findByAuthorIdAndReplyFrom(authorId: String, replyFrom: String): List<Capsule>
 
-    fun delete(capsuleId: String)
+    fun deleteByCapsuleId(capsuleId: String)
 
     fun deleteByJarId(jarId: String)
 }
