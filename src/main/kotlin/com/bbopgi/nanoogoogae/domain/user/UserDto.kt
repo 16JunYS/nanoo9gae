@@ -19,8 +19,8 @@ data class UserDto(
     @field:Schema(example="01012341234", required = true)
     var phoneNumber: String,
 
-    @field:Schema(example="5", required = true)
-    var coin: Int,
+    @field:Schema(description = "공백인 경우 default 5", example="5", required = false)
+    var coin: Int = 5,
 )
 
 fun UserDto.toEntity() = User(

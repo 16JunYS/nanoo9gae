@@ -20,11 +20,11 @@ class JarService(
     fun getJar(jarId: String): JarDto {
         val jar = jarRepository.findByJarId(jarId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
         val user = userRepository.findByUserId(jar.userId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
-        val capsules = capsuleRepository.findByJarId(jar.jarId) ?: listOf()
+        val capsules = capsuleRepository.findByJarId(jar.jarId)
         val capsuleDtos = capsules.map { it.toDto() }
 
         return JarDto(
-            userNickname = jar.userNickname ?: throw Exception("존재하지 않는 뽑기통입니다."),
+            userNickname = jar.userNickname,
             capsules = capsuleDtos,
             coin = user.coin,
         )
@@ -33,7 +33,7 @@ class JarService(
     fun createJar(userNickname: String, userId: String): String {
         // create random 16 alphanumeric string
         var jarId = createJarId()
-        while(jarRepository.findByJarId(jarId) == null) {
+        while(jarRepository.findByJarId(jarId) != null) {
             jarId = createJarId()
         }
 
@@ -44,6 +44,11 @@ class JarService(
         )) ?: throw Exception("뽑기통 생성에 실패했습니다.")
 
         return jarId
+    }
+
+    fun deleteJar(jarId: String) {
+        capsuleRepository.deleteByJarId(jarId)
+        jarRepository.deleteByJarId(jarId)
     }
 
     fun createJarId() = List(16) {

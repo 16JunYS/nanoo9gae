@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val jarService: JarService,
+    private val jarRepository: JarRepository,
 ) {
 
     fun getUser(userId: String): UserDto {
@@ -25,5 +26,11 @@ class UserService(
         )
 
         return jarId
+    }
+
+    fun deleteUser(userId: String) {
+        val jar = jarRepository.findByUserId(userId) ?: throw Exception("뽑기통이 없는 유저입니다")
+        userRepository.deleteByUserId(userId)
+        jarRepository.deleteByJarId(jar.jarId)
     }
 }
