@@ -1,15 +1,15 @@
 package com.bbopgi.nanoogoogae.domain.jar.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.*
+import java.time.LocalDateTime
 
 data class CapsuleDto(
-    var capsuleId: Long,
+    var capsuleId: String,
 
     @field:Schema(description = "편지 작성 유저 닉네임", example = "anonymous_user")
     var authorNickname: String,
 
-    var createdAt: Date,
+    var createdAt: LocalDateTime,
 
     var emojiReply: String?,
 

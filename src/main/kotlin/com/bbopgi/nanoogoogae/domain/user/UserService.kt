@@ -18,7 +18,13 @@ class UserService(
         return user.toDto()
     }
 
+    fun validateUserId(userId: String): Boolean {
+        return userRepository.findByUserId(userId) == null
+    }
     fun createUser(userDto: UserDto): String {
+        if (!validateUserId(userDto.userId)) {
+            throw Exception("이미 존재하는 아이디입니다.")
+        }
         val user = userRepository.insert(userDto.toEntity()) ?: throw Exception("유저 생성에 실패했습니다.")
         val jarId = jarService.createJar(
             userNickname = user.nickname,

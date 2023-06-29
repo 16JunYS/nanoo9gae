@@ -2,12 +2,14 @@ package com.bbopgi.nanoogoogae.global.entity
 
 import com.bbopgi.nanoogoogae.domain.user.UserDto
 import io.swagger.v3.oas.annotations.media.Schema
+import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 
 @Document(collection = "user")
 data class User(
     @Field("user_id")
+    @Id
     @field:Schema(description = "유저 아이디", example="user_id1", required = true)
     var userId: String,
 
@@ -25,6 +27,9 @@ data class User(
     var phoneNumber: String,
     @field:Schema(example="5", required = true)
     var coin: Int,
+
+    @Field("jar_id")
+    var jarId: String,
 )
 
 fun User.toDto() = UserDto(
@@ -33,4 +38,5 @@ fun User.toDto() = UserDto(
     password = this.password,
     phoneNumber = this.phoneNumber,
     coin = this.coin,
+    jarId = this.jarId,
 )

@@ -45,4 +45,10 @@ class UserController(
         return ResponseEntity.ok().build()
     }
 
+    @Operation(summary="유저 가입 시 id 중복 체크")
+    @GetMapping("/user/check")
+    fun validateUserId(@RequestParam id: String): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(userService.validateUserId(id))
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.bbopgi.nanoogoogae.domain.jar.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 import java.util.Date
 
 @Schema(description = "캡슐 상세 정보")
@@ -8,9 +9,12 @@ data class CapsuleDetailDto(
     @field:Schema(description = "작성 유저 닉네임", example = "anonymous_user")
     var authorNickname: String,
 
-    var text: String,
+    @field:Schema(description = "작성 유저 ID. empty string인 경우 비회원", example = "")
+    var authorId: String? = "",
 
-    var createdAt: Date,
+    var content: String,
+
+    var createdAt: LocalDateTime,
 
     @field:Schema(description = "이모지 반응")
     var emojiReply: String?,

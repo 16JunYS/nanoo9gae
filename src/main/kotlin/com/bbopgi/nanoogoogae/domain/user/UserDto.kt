@@ -21,6 +21,8 @@ data class UserDto(
 
     @field:Schema(description = "공백인 경우 default 5", example="5", required = false)
     var coin: Int = 5,
+
+    var jarId: String,
 )
 
 fun UserDto.toEntity() = User(
@@ -29,6 +31,7 @@ fun UserDto.toEntity() = User(
     password = this.password,
     phoneNumber = this.phoneNumber,
     coin = this.coin,
+    jarId = this.jarId,
 )
 
 data class UserCreatePayload(

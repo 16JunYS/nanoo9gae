@@ -40,7 +40,7 @@ class JarService(
         var jar = jarRepository.insert(Jar(
             jarId = jarId,
             userNickname = userNickname,
-            userId = jarId,
+            userId = userId,
         )) ?: throw Exception("뽑기통 생성에 실패했습니다.")
 
         return jarId

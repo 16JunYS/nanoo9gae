@@ -1,7 +1,6 @@
 package com.bbopgi.nanoogoogae.domain.jar
 
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
-import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDto
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
 import com.bbopgi.nanoogoogae.domain.jar.service.CapsuleService
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
@@ -20,43 +19,7 @@ class JarController(
     private val jarService: JarService,
     private val capsuleService: CapsuleService,
 ) {
-    val mockDataCapsule = CapsuleDto(
-        capsuleId = 1,
-        authorNickname = "user-nickname",
-        createdAt = Date(),
-        emojiReply = "[TBD] emojiReply",
-        isPublic = false,
-        isRead = false,
-        type = "normal",
-        color = "red",
-    )
-
-    val mockData = JarDto(
-        userNickname = "userNickname",
-        capsules = listOf(mockDataCapsule),
-        coin = 5,
-    )
-
-    val mockCapsule = CapsuleDetailDto(
-        authorNickname = "userNickname",
-        text = "편지 내용~~!@!~!@",
-        createdAt = Date(),
-        emojiReply = "[TBD] emojiReply",
-        jarId = "jarId (=link path)",
-        isPublic = false,
-        isRead = false,
-        type = "normal",
-        color = "red",
-        isReplied = false,
-    )
-/*
-    @Operation(summary = "( *사용X ) 개발용 API.")
-    @PostMapping
-    fun create(@RequestBody payload: JarSaveRequest):ResponseEntity<Unit> {
-        return ReponseEntity.ok().build()
-//        return ResponseEntity.ok(jarService.create(payload))
-    }
-*/
+    /* Jar Controllers*/
     @GetMapping("/{jarId}")
     fun get(@PathVariable jarId: String): ResponseEntity<JarDto> {
         return ResponseEntity.ok(jarService.getJar(jarId))
@@ -74,31 +37,31 @@ class JarController(
         return ResponseEntity.ok().build()
     }
 */
+    /* Capsule Controllers*/
     @PostMapping("/{jarId}")
-    @Operation(summary = "편지 작성 API, 하단의 CapsuleSaveRequest DTO 참고")
-    fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+    @Operation(summary = "편지 작성 API. returns capsule id")
+    fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String> {
+        return ResponseEntity.ok(capsuleService.createCapsule(payload, jarId))
     }
 
     @Operation(summary = "캡슐 상세 조회 API")
-    @ApiResponse(responseCode = "200", description = "하단의 CapsuleDetailDto DTO 참고")
+    @ApiResponse(responseCode = "200")
     @GetMapping("/{jarId}/{capsuleId}")
-    fun getCapsuleDetail(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<CapsuleDetailDto> {
-        return ResponseEntity.ok(mockCapsule)
+    fun readCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<CapsuleDetailDto> {
+        return ResponseEntity.ok(capsuleService.readCapsule(capsuleId))
     }
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
-    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, gkeksdml CapsuleSaveRequest DTO 참고")
+    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, mock API")
     fun replyCapsule(@PathVariable jarId: String,
                      @PathVariable capsuleId: String,
-                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Int> {
-        // Return CREATED  with 1 as response body
-        return ResponseEntity(1, HttpStatus.CREATED)
+                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String?> {
+        return ResponseEntity(capsuleService.replyCapsule(jarId, capsuleId, payload), HttpStatus.OK)
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")
     fun deleteCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
+        return ResponseEntity(capsuleService.deleteCapsule(capsuleId), HttpStatus.OK)
     }
 
 }

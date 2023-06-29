@@ -1,37 +1,37 @@
 package com.bbopgi.nanoogoogae.global.entity
 
+import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDto
-import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.Transient
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
+import java.time.LocalDateTime
 import java.util.Date
 
 @Document(collection = "capsule")
 data class Capsule(
     @Id
-    var capsuleId: Long,
+    var capsuleId: String,
 
     @Field("author_nickname")
     var authorNickname: String,
 
     @Field("author_id")
-    var authorId: String,
+    var authorId: String?,
 
-    var text: String,
+    var content: String,
 
     @Field("created_at")
-    var createdAt: Date,
+    var createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Field("emoji_reply")
-    var emojiReply: String,
+    var emojiReply: String?=null,
 
     @Field("jar_id")
     var jarId: String,
 
     @Field("is_public")
-    var isPrivate: Boolean,
+    var isPublic: Boolean,
 
     @Field("is_read")
     var isRead: Boolean = false,
@@ -47,8 +47,22 @@ fun Capsule.toDto() = CapsuleDto(
     authorNickname = this.authorNickname,
     createdAt = this.createdAt,
     emojiReply = this.emojiReply,
-    isPublic = this.isPrivate,
+    isPublic = this.isPublic,
     isRead = this.isRead,
     type = if (this.replyFrom == null) "normal" else "reply",
+    color = this.color,
+)
+
+fun Capsule.toDetailDto() = CapsuleDetailDto(
+    authorNickname = this.authorNickname,
+    authorId = this.authorId,
+    content = this.content,
+    createdAt = this.createdAt,
+    emojiReply = this.emojiReply,
+    jarId = this.jarId,
+    isPublic = this.isPublic,
+    isRead = this.isRead,
+    type = if (this.replyFrom == null) "normal" else "reply",
+    isReplied = this.replyFrom != null,
     color = this.color,
 )
