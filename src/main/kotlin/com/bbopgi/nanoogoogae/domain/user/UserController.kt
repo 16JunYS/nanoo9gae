@@ -1,6 +1,7 @@
 package com.bbopgi.nanoogoogae.domain.user
 
 import com.bbopgi.nanoogoogae.global.entity.User
+import com.bbopgi.nanoogoogae.global.entity.toDto
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -17,13 +18,7 @@ class UserController(
     // TEmp
     @Autowired val repo: UserRepository
 ) {
-
-    val mockUser1 = UserDto("id1",
-        "anonymousNickname",
-        "passwd",
-    "01012341234",
-        5
-    )
+    @Operation(summary = "사용자 계정 생성, 뽑기통 ID 반환")
     @PostMapping("/user")
     fun createAccount(@RequestBody payload: User): ResponseEntity<String> {
         val userId = repo.insert(payload)?.userId
@@ -34,14 +29,8 @@ class UserController(
     @Operation(summary = "유저 ID로 유저 정보 조회")
     @GetMapping("/user")
     fun getUser(@RequestParam id: String): ResponseEntity<UserDto?> {
-        return ResponseEntity(mockUser1, HttpStatus.OK);
-
-        val user = repo.findByUserId(id)
-        val statusCode =
-            if (user != null) HttpStatus.OK
-            else HttpStatus.INTERNAL_SERVER_ERROR
-
-//        return ResponseEntity(user, statusCode)
+        val user = repo.findByUserId(id) ?: return ResponseEntity(null, HttpStatus.NOT_FOUND)
+        return ResponseEntity(user.toDto(), HttpStatus.OK)
     }
 
     @Operation(summary = "유저 삭제(탈퇴)")

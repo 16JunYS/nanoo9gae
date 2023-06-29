@@ -67,12 +67,13 @@ class JarController(
         return ResponseEntity.ok(mockData)
     }
 */
+    /*
     @Operation(summary = "( *사용X ) 유저가 탈퇴하는 경우 내부적으로 삭제 로직 진행 예정")
     @DeleteMapping("/{jarId}")
     fun delete(@PathVariable jarId: String): ResponseEntity<Unit> {
         return ResponseEntity.ok().build()
     }
-
+*/
     @PostMapping("/{jarId}")
     @Operation(summary = "편지 작성 API, 하단의 CapsuleSaveRequest DTO 참고")
     fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<Unit> {

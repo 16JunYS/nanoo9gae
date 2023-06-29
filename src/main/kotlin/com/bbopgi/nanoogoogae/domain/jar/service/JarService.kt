@@ -30,18 +30,20 @@ class JarService(
         )
     }
 
-    fun createJar(userNickname: String, userId: String) {
+    fun createJar(userNickname: String, userId: String): String {
         // create random 16 alphanumeric string
         var jarId = createJarId()
-        while(getJar(jarId) != null) {
+        while(jarRepository.findByJarId(jarId) == null) {
             jarId = createJarId()
         }
 
-        jarRepository.insert(Jar(
+        var jar = jarRepository.insert(Jar(
             jarId = jarId,
             userNickname = userNickname,
             userId = jarId,
-        ))
+        )) ?: throw Exception("뽑기통 생성에 실패했습니다.")
+
+        return jarId
     }
 
     fun createJarId() = List(16) {

@@ -1,5 +1,6 @@
 package com.bbopgi.nanoogoogae.domain.user
 
+import com.bbopgi.nanoogoogae.global.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class UserDto(
@@ -20,4 +21,20 @@ data class UserDto(
 
     @field:Schema(example="5", required = true)
     var coin: Int,
+)
+
+fun UserDto.toEntity() = User(
+    userId = this.userId,
+    nickname = this.nickname,
+    password = this.password,
+    phoneNumber = this.phoneNumber,
+    coin = this.coin,
+)
+
+data class UserCreatePayload(
+    @field:Schema(
+        description = "유저의 뽑기통 url path가 될 뽑기통 16자리의 ID",
+        example="abcde12345abcde1"
+    )
+    var jarId: String,
 )
