@@ -1,7 +1,7 @@
 package com.bbopgi.nanoogoogae.domain.jar
 
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
-import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
+import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleCreatePayload
 import com.bbopgi.nanoogoogae.domain.jar.service.CapsuleService
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
@@ -40,7 +40,7 @@ class JarController(
     /* Capsule Controllers*/
     @PostMapping("/{jarId}")
     @Operation(summary = "편지 작성 API. returns capsule id")
-    fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String> {
+    fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleCreatePayload): ResponseEntity<String> {
         return ResponseEntity.ok(capsuleService.createCapsule(payload, jarId))
     }
 
@@ -55,7 +55,7 @@ class JarController(
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, mock API")
     fun replyCapsule(@PathVariable jarId: String,
                      @PathVariable capsuleId: String,
-                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String?> {
+                     @RequestBody payload: CapsuleCreatePayload): ResponseEntity<String?> {
         return ResponseEntity(capsuleService.replyCapsule(jarId, capsuleId, payload), HttpStatus.OK)
     }
 

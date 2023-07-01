@@ -1,7 +1,7 @@
 package com.bbopgi.nanoogoogae.domain.jar.service
 
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
-import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
+import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleCreatePayload
 import com.bbopgi.nanoogoogae.global.entity.Capsule
 import com.bbopgi.nanoogoogae.global.entity.toDetailDto
 import com.bbopgi.nanoogoogae.global.repository.CapsuleRepository
@@ -18,7 +18,7 @@ class CapsuleService(
     private val jarRepository: JarRepository,
     private val userRepository: UserRepository,
 ) {
-    fun createCapsule(payload: CapsuleSaveRequest, jarId: String):String {
+    fun createCapsule(payload: CapsuleCreatePayload, jarId: String):String {
         val capsule = Capsule(
             capsuleId = ObjectId().toString(),
             jarId = jarId,
@@ -32,7 +32,7 @@ class CapsuleService(
         return ret.capsuleId
     }
 
-    fun replyCapsule(fromJarId: String, capsuleId: String, payload: CapsuleSaveRequest): String? {
+    fun replyCapsule(fromJarId: String, capsuleId: String, payload: CapsuleCreatePayload): String? {
         val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
 
         if (fromCapsule.authorId == null) {
