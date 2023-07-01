@@ -29,12 +29,20 @@ class CapsuleService(
             color = payload.color,
         )
         val ret = capsuleRepository.insert(capsule) ?: throw Exception("캡슐 생성에 실패했습니다.")
+
+        var user = userRepository.findByUserId(payload.userId!!)
+        user!!.coin--
+        userRepository.save(user)
+
         return ret.capsuleId
     }
 
     fun replyCapsule(fromJarId: String, capsuleId: String, payload: CapsuleCreatePayload): String? {
-        val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
+        if (payload.userId == null) {
+            return null
+        }
 
+        val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
         if (fromCapsule.authorId == null) {
             return null
         }
@@ -52,6 +60,9 @@ class CapsuleService(
             replyFrom = capsuleId,
         )
         val ret = capsuleRepository.insert(capsule) ?: throw Exception("캡슐 생성에 실패했습니다.")
+        var replyFromUser = userRepository.findByUserId(payload.userId!!)
+        replyFromUser!!.coin--
+        userRepository.save(replyFromUser)
 
         return ret.capsuleId
     }
@@ -60,6 +71,10 @@ class CapsuleService(
         var capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
         capsule.isRead = true
         capsuleRepository.save(capsule)
+
+        var user = userRepository.findByUserId(capsule.authorId!!) ?: throw Exception("존재하지 않는 유저입니다.")
+        user.coin--
+        userRepository.save(user)
 
         return capsule.toDetailDto()
     }

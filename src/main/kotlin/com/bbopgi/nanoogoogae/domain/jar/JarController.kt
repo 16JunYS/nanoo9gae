@@ -52,7 +52,7 @@ class JarController(
     }
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
-    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, mock API")
+    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
     fun replyCapsule(@PathVariable jarId: String,
                      @PathVariable capsuleId: String,
                      @RequestBody payload: CapsuleCreatePayload): ResponseEntity<String?> {
