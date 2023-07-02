@@ -37,7 +37,7 @@ class CapsuleService(
 
         if (userId != null) {
             val user = userRepository.findByUserId(userId)
-            user!!.coin--
+            user!!.coin++
             userRepository.save(user)
         }
 
@@ -69,7 +69,7 @@ class CapsuleService(
         )
         val ret = capsuleRepository.insert(capsule) ?: throw Exception("캡슐 생성에 실패했습니다.")
         var replyFromUser = userRepository.findByUserId(userId)
-        replyFromUser!!.coin--
+        replyFromUser!!.coin++
         userRepository.save(replyFromUser)
 
         return ret.capsuleId
