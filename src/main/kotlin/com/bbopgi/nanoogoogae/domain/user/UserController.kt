@@ -21,11 +21,13 @@ class UserController(
         summary = "사용자 계정 생성, 뽑기통 ID 반환",
         responses = [
             ApiResponse(responseCode = "201", description = "사용자 링크에 사용될 path(뽑기통 id) 반환"),
+            ApiResponse(responseCode = "400", description = "중복 아이디인 경우"),
         ]
     )
     @PostMapping
-    fun createAccount(@RequestBody payload: UserDto): ResponseEntity<String> {
+    fun createAccount(@RequestBody payload: UserCreatePayload): ResponseEntity<String> {
         val jarId = userService.createUser(payload)
+            ?: return ResponseEntity<String>("이미 존재하는 아이디입니다.", HttpStatus.BAD_REQUEST)
 
         return ResponseEntity<String>(jarId, HttpStatus.CREATED)
     }

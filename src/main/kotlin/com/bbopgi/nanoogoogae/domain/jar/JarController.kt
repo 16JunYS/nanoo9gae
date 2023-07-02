@@ -59,7 +59,7 @@ class JarController(
     }
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
-    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, mock API")
+    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
     fun replyCapsule(
         authentication: Authentication,
         @PathVariable jarId: String,
@@ -76,5 +76,4 @@ class JarController(
     fun deleteCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<Unit> {
         return ResponseEntity(capsuleService.deleteCapsule(capsuleId), HttpStatus.OK)
     }
-
 }
