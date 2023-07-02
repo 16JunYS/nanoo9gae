@@ -44,14 +44,6 @@ class JwtFilter(
         authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
         SecurityContextHolder.getContext().authentication = authenticationToken
         filterChain.doFilter(request, response)
-/*
-        val token = request.getHeader("Authorization")?.replace("Bearer ", "")
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            val authentication = jwtTokenProvider.getAuthentication(token)
-            SecurityContextHolder.getContext().authentication = authentication
-        }
-        filterChain.doFilter(request, response)
-*/
     }
 
     companion object{

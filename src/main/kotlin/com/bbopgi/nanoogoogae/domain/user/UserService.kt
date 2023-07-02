@@ -19,7 +19,9 @@ class UserService(
     private val expiredMs: Long = 1000 * 60 * 60 * 24L
 
     fun login(id: String, password: String): String {
-        // 인증과정 생략
+        if (!validateIdPw(id, password)) {
+            throw Exception("아이디 또는 비밀번호가 일치하지 않습니다.")
+        }
         return JwtUtil.createJwt(id, secretKey, expiredMs)
     }
 
@@ -51,5 +53,11 @@ class UserService(
         val jar = jarRepository.findByUserId(userId) ?: throw Exception("뽑기통이 없는 유저입니다")
         userRepository.deleteByUserId(userId)
         jarRepository.deleteByJarId(jar.jarId)
+    }
+
+    fun validateIdPw(id: String, pw: String): Boolean {
+        val user = userRepository.findByUserId(id) ?: throw Exception("존재하지 않는 유저입니다.")
+
+        return user.password == pw
     }
 }

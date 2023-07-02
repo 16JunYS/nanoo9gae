@@ -27,7 +27,7 @@ class CapsuleService(
         val capsule = Capsule(
             capsuleId = capsuleId,
             jarId = jarId,
-            authorId = userId,
+            authorId = userId ?: "",
             authorNickname = payload.authorNickname,
             content = payload.content,
             isPublic = payload.isPublic,
@@ -51,7 +51,7 @@ class CapsuleService(
         // [TODO] check if logged user matches with the jar owner
 
         val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
-        if (fromCapsule.authorId == null) {
+        if (fromCapsule.authorId == null || fromCapsule.authorId == "") {
             return null
         }
 
@@ -80,9 +80,14 @@ class CapsuleService(
         capsule.isRead = true
         capsuleRepository.save(capsule)
 
-        var user = userRepository.findByUserId(capsule.authorId!!) ?: throw Exception("존재하지 않는 유저입니다.")
-        user.coin--
-        userRepository.save(user)
+        if (jarRepository.findByJarId(capsule.jarId)!!.userId == userId) {
+            var user = userRepository.findByUserId(userId) ?: throw Exception("존재하지 않는 유저입니다.")
+            user.coin--
+            userRepository.save(user)
+        }
+        else if (capsule.authorId != userId) {
+            throw Exception("권한이 없습니다.")
+        }
 
         return capsule.toDetailDto()
     }

@@ -51,12 +51,12 @@ class UserController(
     @GetMapping
     fun getUser(
         authentication: Authentication?,
-        @RequestParam(required = false) id: String = "",
+        @RequestParam(required = false) id: String ?= "",
     ): ResponseEntity<UserDto?> {
         return if (authentication != null) {
             ResponseEntity(userService.getUser(authentication.name), HttpStatus.OK)
         } else {
-            ResponseEntity(userService.getUser(id), HttpStatus.OK)
+            ResponseEntity(userService.getUser(id!!), HttpStatus.OK)
         }
     }
 
