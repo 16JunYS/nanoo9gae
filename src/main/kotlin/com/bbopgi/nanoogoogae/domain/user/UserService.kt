@@ -1,9 +1,11 @@
 package com.bbopgi.nanoogoogae.domain.user
 
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
+import com.bbopgi.nanoogoogae.global.JwtUtil
 import com.bbopgi.nanoogoogae.global.entity.toDto
 import com.bbopgi.nanoogoogae.global.repository.JarRepository
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,7 +13,15 @@ class UserService(
     private val userRepository: UserRepository,
     private val jarService: JarService,
     private val jarRepository: JarRepository,
+    @Value("\${jwt.secret.key}")
+    private var secretKey: String = "",
 ) {
+    private val expiredMs: Long = 1000 * 60 * 60 * 24L
+
+    fun login(id: String, password: String): String {
+        // 인증과정 생략
+        return JwtUtil.createJwt(id, secretKey, expiredMs)
+    }
 
     fun getUser(userId: String): UserDto {
         val user = userRepository.findByUserId(userId) ?: throw Exception("존재하지 않는 유저입니다.")

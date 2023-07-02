@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -24,39 +25,51 @@ class JarController(
     fun get(@PathVariable jarId: String): ResponseEntity<JarDto> {
         return ResponseEntity.ok(jarService.getJar(jarId))
     }
-/*
-    @Operation(summary = "유저 id에 해당하는 뽑기통 & 담겨진 캡슐 편지 정보 조회")
-    fun getByUserId(@RequestParam userId: String): ResponseEntity<JarDto> {
-        return ResponseEntity.ok(mockData)
-    }
-*/
-    /*
-    @Operation(summary = "( *사용X ) 유저가 탈퇴하는 경우 내부적으로 삭제 로직 진행 예정")
-    @DeleteMapping("/{jarId}")
-    fun delete(@PathVariable jarId: String): ResponseEntity<Unit> {
-        return ResponseEntity.ok().build()
-    }
-*/
     /* Capsule Controllers*/
     @PostMapping("/{jarId}")
     @Operation(summary = "편지 작성 API. returns capsule id")
-    fun createCapsule(@PathVariable jarId: String, @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String> {
-        return ResponseEntity.ok(capsuleService.createCapsule(payload, jarId))
+    fun createCapsule(
+        authentication: Authentication?,
+        @PathVariable jarId: String,
+        @RequestBody payload: CapsuleSaveRequest
+    ): ResponseEntity<String> {
+        return ResponseEntity.ok(
+            capsuleService.createCapsule(payload, jarId, authentication?.name)
+        )
     }
 
-    @Operation(summary = "캡슐 상세 조회 API")
+    @Operation(
+        summary = "캡슐 상세 조회 API",
+        responses = [
+            ApiResponse(responseCode = "200", description = "해당 캡슐 정보 반환"),
+            ApiResponse(responseCode = "401", description = "로그인 필요"),
+        ]
+    )
     @ApiResponse(responseCode = "200")
     @GetMapping("/{jarId}/{capsuleId}")
-    fun readCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<CapsuleDetailDto> {
-        return ResponseEntity.ok(capsuleService.readCapsule(capsuleId))
+    fun readCapsule(
+        authentication: Authentication?,
+        @PathVariable jarId: String,
+        @PathVariable capsuleId: String,
+    ): ResponseEntity<CapsuleDetailDto> {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+        return ResponseEntity.ok(capsuleService.readCapsule(capsuleId, authentication.name))
     }
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API, mock API")
-    fun replyCapsule(@PathVariable jarId: String,
-                     @PathVariable capsuleId: String,
-                     @RequestBody payload: CapsuleSaveRequest): ResponseEntity<String?> {
-        return ResponseEntity(capsuleService.replyCapsule(jarId, capsuleId, payload), HttpStatus.OK)
+    fun replyCapsule(
+        authentication: Authentication,
+        @PathVariable jarId: String,
+        @PathVariable capsuleId: String,
+        @RequestBody payload: CapsuleSaveRequest
+    ): ResponseEntity<String?> {
+        return ResponseEntity(
+            capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name),
+            HttpStatus.OK
+        )
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")

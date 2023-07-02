@@ -20,15 +20,17 @@ repositories {
 }
 
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-//	implementation('com.fasterxml.jackson.modul:jackson-module-kotlin')l
 	compileOnly('org.springframework.boot:spring-boot-devtools')
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	runtimeOnly('org.springframework.boot:spring-boot-devtools')
+
 }
 
 tasks.withType(KotlinCompile) {

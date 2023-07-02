@@ -18,11 +18,16 @@ class CapsuleService(
     private val jarRepository: JarRepository,
     private val userRepository: UserRepository,
 ) {
-    fun createCapsule(payload: CapsuleSaveRequest, jarId: String):String {
+    fun createCapsule(payload: CapsuleSaveRequest, jarId: String, userId: String?):String {
+        var capsuleId = ObjectId().toString()
+        while(capsuleRepository.findByCapsuleId(capsuleId) != null) {
+            capsuleId = ObjectId().toString()
+        }
+
         val capsule = Capsule(
-            capsuleId = ObjectId().toString(),
+            capsuleId = capsuleId,
             jarId = jarId,
-            authorId = payload.userId,
+            authorId = userId,
             authorNickname = payload.authorNickname,
             content = payload.content,
             isPublic = payload.isPublic,
@@ -32,7 +37,12 @@ class CapsuleService(
         return ret.capsuleId
     }
 
-    fun replyCapsule(fromJarId: String, capsuleId: String, payload: CapsuleSaveRequest): String? {
+    fun replyCapsule(
+        fromJarId: String, capsuleId: String, payload: CapsuleSaveRequest,
+        userId: String
+    ): String? {
+        // [TODO] check if logged user matches with the jar owner
+
         val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
 
         if (fromCapsule.authorId == null) {
@@ -44,7 +54,7 @@ class CapsuleService(
         var capsule = Capsule(
             capsuleId = ObjectId().toString(),
             jarId = jarRepository.findByUserId(replyToUser.userId)!!.jarId,
-            authorId = payload.userId,
+            authorId = userId,
             authorNickname = payload.authorNickname,
             content = payload.content,
             isPublic = payload.isPublic,
@@ -56,7 +66,7 @@ class CapsuleService(
         return ret.capsuleId
     }
 
-    fun readCapsule(capsuleId: String): CapsuleDetailDto {
+    fun readCapsule(capsuleId: String, userId: String): CapsuleDetailDto {
         var capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
         capsule.isRead = true
         capsuleRepository.save(capsule)

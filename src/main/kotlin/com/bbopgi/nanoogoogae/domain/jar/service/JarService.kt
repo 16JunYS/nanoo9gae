@@ -30,6 +30,11 @@ class JarService(
         )
     }
 
+    fun getJarIdByUserId(userId: String): String {
+        val jar = jarRepository.findByUserId(userId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
+        return jar.jarId
+    }
+
     fun createJar(userNickname: String, userId: String): String {
         // create random 16 alphanumeric string
         var jarId = createJarId()
