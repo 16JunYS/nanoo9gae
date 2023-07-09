@@ -4,6 +4,7 @@ import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
 import com.bbopgi.nanoogoogae.global.entity.Capsule
 import com.bbopgi.nanoogoogae.global.entity.toDetailDto
+import com.bbopgi.nanoogoogae.global.exception.NanoogoogaeException
 import com.bbopgi.nanoogoogae.global.repository.CapsuleRepository
 import com.bbopgi.nanoogoogae.global.repository.JarRepository
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
@@ -33,7 +34,7 @@ class CapsuleService(
             isPublic = payload.isPublic,
             color = payload.color,
         )
-        val ret = capsuleRepository.insert(capsule) ?: throw Exception("캡슐 생성에 실패했습니다.")
+        val ret = capsuleRepository.insert(capsule) ?: throw NanoogoogaeException("캡슐 생성에 실패했습니다.")
 
         if (userId != null) {
             val user = userRepository.findByUserId(userId)
@@ -50,7 +51,7 @@ class CapsuleService(
     ): String? {
         // [TODO] check if logged user matches with the jar owner
 
-        val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
+        val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
         if (fromCapsule.authorId == null || fromCapsule.authorId == "") {
             return null
         }
@@ -67,7 +68,7 @@ class CapsuleService(
             color = payload.color,
             replyFrom = capsuleId,
         )
-        val ret = capsuleRepository.insert(capsule) ?: throw Exception("캡슐 생성에 실패했습니다.")
+        val ret = capsuleRepository.insert(capsule) ?: throw NanoogoogaeException("캡슐 생성에 실패했습니다.")
         var replyFromUser = userRepository.findByUserId(userId)
         replyFromUser!!.coin++
         userRepository.save(replyFromUser)
@@ -76,17 +77,17 @@ class CapsuleService(
     }
 
     fun readCapsule(capsuleId: String, userId: String): CapsuleDetailDto {
-        var capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw Exception("존재하지 않는 캡슐입니다.")
+        var capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
         capsule.isRead = true
         capsuleRepository.save(capsule)
 
         if (jarRepository.findByJarId(capsule.jarId)!!.userId == userId) {
-            var user = userRepository.findByUserId(userId) ?: throw Exception("존재하지 않는 유저입니다.")
+            var user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
             user.coin--
             userRepository.save(user)
         }
         else if (capsule.authorId != userId) {
-            throw Exception("권한이 없습니다.")
+            throw NanoogoogaeException("권한이 없습니다.")
         }
 
         return capsule.toDetailDto()

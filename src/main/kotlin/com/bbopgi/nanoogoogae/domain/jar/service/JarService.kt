@@ -3,6 +3,7 @@ package com.bbopgi.nanoogoogae.domain.jar.service
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
 import com.bbopgi.nanoogoogae.global.entity.Jar
 import com.bbopgi.nanoogoogae.global.entity.toDto
+import com.bbopgi.nanoogoogae.global.exception.NanoogoogaeException
 import com.bbopgi.nanoogoogae.global.repository.CapsuleRepository
 import com.bbopgi.nanoogoogae.global.repository.JarRepository
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
@@ -18,8 +19,8 @@ class JarService(
 ) {
 
     fun getJar(jarId: String): JarDto {
-        val jar = jarRepository.findByJarId(jarId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
-        val user = userRepository.findByUserId(jar.userId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
+        val jar = jarRepository.findByJarId(jarId) ?: throw NanoogoogaeException("존재하지 않는 뽑기통입니다.")
+        val user = userRepository.findByUserId(jar.userId) ?: throw NanoogoogaeException("존재하지 않는 뽑기통입니다.")
         val capsules = capsuleRepository.findByJarId(jar.jarId)
         val capsuleDtos = capsules.map { it.toDto() }
 
@@ -31,7 +32,7 @@ class JarService(
     }
 
     fun getJarIdByUserId(userId: String): String {
-        val jar = jarRepository.findByUserId(userId) ?: throw Exception("존재하지 않는 뽑기통입니다.")
+        val jar = jarRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 뽑기통입니다.")
         return jar.jarId
     }
 
@@ -46,7 +47,7 @@ class JarService(
             jarId = jarId,
             userNickname = userNickname,
             userId = userId,
-        )) ?: throw Exception("뽑기통 생성에 실패했습니다.")
+        )) ?: throw NanoogoogaeException("뽑기통 생성에 실패했습니다.")
 
         return jarId
     }
