@@ -1,8 +1,11 @@
-package com.bbopgi.nanoogoogae.domain.user
+package com.bbopgi.nanoogoogae.domain.user.service
 
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
+import com.bbopgi.nanoogoogae.domain.user.dto.UserCreatePayload
+import com.bbopgi.nanoogoogae.domain.user.dto.UserPublicDto
+import com.bbopgi.nanoogoogae.domain.user.dto.toEntity
 import com.bbopgi.nanoogoogae.global.JwtUtil
-import com.bbopgi.nanoogoogae.global.entity.toDto
+import com.bbopgi.nanoogoogae.global.entity.toPublicDto
 import com.bbopgi.nanoogoogae.global.exception.NanoogoogaeException
 import com.bbopgi.nanoogoogae.global.repository.JarRepository
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
@@ -26,9 +29,9 @@ class UserService(
         return JwtUtil.createJwt(id, secretKey, expiredMs)
     }
 
-    fun getUser(userId: String): UserDto {
+    fun getUser(userId: String): UserPublicDto {
         val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
-        return user.toDto()
+        return user.toPublicDto()
     }
 
     fun validateUserId(userId: String): Boolean {

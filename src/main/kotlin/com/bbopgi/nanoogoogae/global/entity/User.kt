@@ -1,6 +1,7 @@
 package com.bbopgi.nanoogoogae.global.entity
 
-import com.bbopgi.nanoogoogae.domain.user.UserDto
+import com.bbopgi.nanoogoogae.domain.user.dto.UserDto
+import com.bbopgi.nanoogoogae.domain.user.dto.UserPublicDto
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -36,6 +37,14 @@ fun User.toDto() = UserDto(
     userId = this.userId,
     nickname = this.nickname,
     password = this.password,
+    phoneNumber = this.phoneNumber,
+    coin = this.coin,
+    jarId = this.jarId,
+)
+
+fun User.toPublicDto() = UserPublicDto(
+    userId = this.userId,
+    nickname = this.nickname,
     phoneNumber = this.phoneNumber,
     coin = this.coin,
     jarId = this.jarId,

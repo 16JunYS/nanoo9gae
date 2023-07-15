@@ -1,6 +1,8 @@
 package com.bbopgi.nanoogoogae.domain.user
 
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
+import com.bbopgi.nanoogoogae.domain.user.dto.*
+import com.bbopgi.nanoogoogae.domain.user.service.UserService
 import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -58,11 +60,13 @@ class UserController(
     fun getUser(
         authentication: Authentication?,
         @RequestParam(required = false) id: String ?= "",
-    ): CommonApiResponse<UserDto> {
+    ): CommonApiResponse<UserPublicDto> {
         return if (authentication != null) {
-            CommonApiResponse<UserDto>().success(userService.getUser(authentication.name))
+            CommonApiResponse<UserPublicDto>()
+                .success(userService.getUser(authentication.name))
         } else {
-            CommonApiResponse<UserDto>().success(userService.getUser(id!!))
+            CommonApiResponse<UserPublicDto>()
+                .success(userService.getUser(id!!))
         }
     }
 

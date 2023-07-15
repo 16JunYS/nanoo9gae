@@ -1,6 +1,6 @@
 package com.bbopgi.nanoogoogae.global.configuration
 
-import com.bbopgi.nanoogoogae.domain.user.UserService
+import com.bbopgi.nanoogoogae.domain.user.service.UserService
 import io.jsonwebtoken.Jwts
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

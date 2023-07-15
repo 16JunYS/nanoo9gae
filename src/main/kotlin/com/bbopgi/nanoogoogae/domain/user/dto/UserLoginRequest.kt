@@ -1,4 +1,4 @@
-package com.bbopgi.nanoogoogae.domain.user
+package com.bbopgi.nanoogoogae.domain.user.dto
 
 data class UserLoginRequest(
     val id: String,

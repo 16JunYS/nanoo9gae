@@ -1,9 +1,9 @@
-package com.bbopgi.nanoogoogae.domain.user
+package com.bbopgi.nanoogoogae.domain.user.dto
 
 import com.bbopgi.nanoogoogae.global.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 
-data class UserDto(
+data class UserCreatePayload (
     var userId: String,
 
     @field:Schema(
@@ -21,15 +21,13 @@ data class UserDto(
 
     @field:Schema(description = "공백인 경우 default 5", example="5", required = false)
     var coin: Int = 5,
-
-    var jarId: String,
 )
 
-fun UserDto.toEntity() = User(
+fun UserCreatePayload.toEntity(jarId: String) = User(
     userId = this.userId,
     nickname = this.nickname,
     password = this.password,
     phoneNumber = this.phoneNumber,
-    coin = this.coin,
-    jarId = this.jarId,
+    coin = coin,
+    jarId = jarId,
 )
