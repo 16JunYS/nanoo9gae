@@ -6,6 +6,7 @@ import com.bbopgi.nanoogoogae.domain.jar.service.CapsuleService
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
 import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
+import com.bbopgi.nanoogoogae.global.common.Serializer
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.HttpStatus
@@ -31,14 +32,14 @@ class JarController(
         authentication: Authentication?,
         @PathVariable jarId: String,
         @RequestBody payload: CapsuleSaveRequest
-    ): CommonApiResponse<Pair<String, String>> {
+    ): CommonApiResponse<*> {
         return try {
             val id = capsuleService.createCapsule(payload, jarId, authentication?.name)
 
-            CommonApiResponse<Pair<String, String>>()
-                .created("id" to id)
+            CommonApiResponse<Any>()
+                .created(Serializer().buildMap("id" to id))
         } catch (e: Exception) {
-            CommonApiResponse<Pair<String, String>>().error(e.message)
+            CommonApiResponse<Unit>().error(e.message)
         }
     }
 
@@ -71,11 +72,11 @@ class JarController(
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
         @RequestBody payload: CapsuleSaveRequest
-    ): CommonApiResponse<Pair<String, String?>> {
-        return CommonApiResponse<Pair<String, String?>>()
-            .success( "id" to
-                    capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
-            )
+    ): CommonApiResponse<*> {
+        val id = capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
+
+        return CommonApiResponse<Any>()
+            .success(Serializer().buildMap("id" to id))
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")

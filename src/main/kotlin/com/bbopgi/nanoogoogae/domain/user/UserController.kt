@@ -4,6 +4,7 @@ import com.bbopgi.nanoogoogae.domain.jar.service.JarService
 import com.bbopgi.nanoogoogae.domain.user.dto.*
 import com.bbopgi.nanoogoogae.domain.user.service.UserService
 import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
+import com.bbopgi.nanoogoogae.global.common.Serializer
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -32,8 +33,8 @@ class UserController(
             ?: return CommonApiResponse<Unit>()
                 .error("이미 존재하는 아이디입니다.")
 
-        return CommonApiResponse<Pair<String, String>>()
-            .created("id" to jarId)
+        return CommonApiResponse<Any>()
+            .created(Serializer().buildMap("id" to jarId))
     }
 
     @Operation(
@@ -82,9 +83,9 @@ class UserController(
 
     @Operation(summary="유저 가입 시 id 중복 체크")
     @GetMapping("/check")
-    fun validateUserId(@RequestParam id: String): CommonApiResponse<Pair<String, String>> {
-        return CommonApiResponse<Pair<String, String>>()
-            .success("success" to userService.validateUserId(id).toString())
+    fun validateUserId(@RequestParam id: String): CommonApiResponse<*> {
+        return CommonApiResponse<Any>()
+            .success(Serializer().buildMap("success" to userService.validateUserId(id)))
     }
 
 }
