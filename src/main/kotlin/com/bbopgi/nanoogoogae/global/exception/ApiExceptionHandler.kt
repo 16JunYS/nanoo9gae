@@ -1,6 +1,7 @@
 package com.bbopgi.nanoogoogae.global.exception
 
-import org.springframework.http.ResponseEntity
+import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -8,18 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class ApiExceptionHandler {
 
     @ExceptionHandler(NanoogoogaeException::class)
-    fun handleNanoogoogaeException(e: NanoogoogaeException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity.badRequest().body(
-            ErrorResponse(e.message ?: "알 수 없는 오류가 발생했습니다."))
+    fun handleNanoogoogaeException(e: NanoogoogaeException): CommonApiResponse<*> {
+        return CommonApiResponse<Unit>().error(e.message)
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(e: Exception): ResponseEntity<ErrorResponse> {
-        return ResponseEntity.internalServerError().body(
-            ErrorResponse(e.message ?: "알 수 없는 오류가 발생했습니다."))
+    fun handleException(e: Exception): CommonApiResponse<*> {
+        return CommonApiResponse<Unit>()
+            .error(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message ?: "알 수 없는 오류가 발생했습니다.")
     }
 }
-
-class ErrorResponse(
-    val message: String,
-)

@@ -5,13 +5,12 @@ import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
 import com.bbopgi.nanoogoogae.domain.jar.service.CapsuleService
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
+import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 @RequestMapping("/jar")
@@ -22,8 +21,8 @@ class JarController(
 ) {
     /* Jar Controllers*/
     @GetMapping("/{jarId}")
-    fun get(@PathVariable jarId: String): ResponseEntity<JarDto> {
-        return ResponseEntity.ok(jarService.getJar(jarId))
+    fun get(@PathVariable jarId: String): CommonApiResponse<JarDto> {
+        return CommonApiResponse<JarDto>().success(jarService.getJar(jarId))
     }
     /* Capsule Controllers*/
     @PostMapping("/{jarId}")
@@ -32,10 +31,15 @@ class JarController(
         authentication: Authentication?,
         @PathVariable jarId: String,
         @RequestBody payload: CapsuleSaveRequest
-    ): ResponseEntity<String> {
-        return ResponseEntity.ok(
-            capsuleService.createCapsule(payload, jarId, authentication?.name)
-        )
+    ): CommonApiResponse<Pair<String, String>> {
+        return try {
+            val id = capsuleService.createCapsule(payload, jarId, authentication?.name)
+
+            CommonApiResponse<Pair<String, String>>()
+                .created("id" to id)
+        } catch (e: Exception) {
+            CommonApiResponse<Pair<String, String>>().error(e.message)
+        }
     }
 
     @Operation(
@@ -51,11 +55,13 @@ class JarController(
         authentication: Authentication?,
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
-    ): ResponseEntity<CapsuleDetailDto> {
+    ): CommonApiResponse<CapsuleDetailDto> {
         if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+            return CommonApiResponse<CapsuleDetailDto>()
+                .error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
         }
-        return ResponseEntity.ok(capsuleService.readCapsule(capsuleId, authentication.name))
+        return CommonApiResponse<CapsuleDetailDto>()
+            .success(capsuleService.readCapsule(capsuleId, authentication.name))
     }
 
     @PostMapping("/{jarId}/{capsuleId}/reply")
@@ -65,15 +71,17 @@ class JarController(
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
         @RequestBody payload: CapsuleSaveRequest
-    ): ResponseEntity<String?> {
-        return ResponseEntity(
-            capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name),
-            HttpStatus.OK
-        )
+    ): CommonApiResponse<Pair<String, String?>> {
+        return CommonApiResponse<Pair<String, String?>>()
+            .success( "id" to
+                    capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
+            )
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")
-    fun deleteCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String): ResponseEntity<Unit> {
-        return ResponseEntity(capsuleService.deleteCapsule(capsuleId), HttpStatus.OK)
+    fun deleteCapsule(@PathVariable jarId: String, @PathVariable capsuleId: String)
+    : CommonApiResponse<Unit> {
+        return CommonApiResponse<Unit>()
+            .success(capsuleService.deleteCapsule(capsuleId))
     }
 }

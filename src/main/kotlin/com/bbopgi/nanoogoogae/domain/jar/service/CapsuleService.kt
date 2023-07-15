@@ -19,7 +19,7 @@ class CapsuleService(
     private val jarRepository: JarRepository,
     private val userRepository: UserRepository,
 ) {
-    fun createCapsule(payload: CapsuleSaveRequest, jarId: String, userId: String?):String {
+    fun createCapsule(payload: CapsuleSaveRequest, jarId: String, userId: String?): String {
         var capsuleId = ObjectId().toString()
         while(capsuleRepository.findByCapsuleId(capsuleId) != null) {
             capsuleId = ObjectId().toString()

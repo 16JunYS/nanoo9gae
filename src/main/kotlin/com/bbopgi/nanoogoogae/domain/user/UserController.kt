@@ -1,13 +1,13 @@
 package com.bbopgi.nanoogoogae.domain.user
 
 import com.bbopgi.nanoogoogae.domain.jar.service.JarService
+import com.bbopgi.nanoogoogae.global.common.CommonApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
+import java.lang.Exception
 
 @CrossOrigin(origins = ["*"])
 @RestController
@@ -25,11 +25,13 @@ class UserController(
         ]
     )
     @PostMapping
-    fun createAccount(@RequestBody payload: UserCreatePayload): ResponseEntity<String> {
+    fun createAccount(@RequestBody payload: UserCreatePayload): CommonApiResponse<*> {
         val jarId = userService.createUser(payload)
-            ?: return ResponseEntity<String>("이미 존재하는 아이디입니다.", HttpStatus.BAD_REQUEST)
+            ?: return CommonApiResponse<Unit>()
+                .error("이미 존재하는 아이디입니다.")
 
-        return ResponseEntity<String>(jarId, HttpStatus.CREATED)
+        return CommonApiResponse<Pair<String, String>>()
+            .created("id" to jarId)
     }
 
     @Operation(
@@ -40,11 +42,15 @@ class UserController(
         ]
     )
     @PostMapping("/login")
-    fun login(@RequestBody payload: UserLoginRequest): ResponseEntity<UserLoginResponse> {
-        val jwt = userService.login(payload.id, payload.password)
-        val jarId = jarService.getJarIdByUserId(payload.id)
+    fun login(@RequestBody payload: UserLoginRequest): CommonApiResponse<*> {
+        return try {
+            val jwt = userService.login(payload.id, payload.password)
+            val jarId = jarService.getJarIdByUserId(payload.id)
 
-        return ResponseEntity(UserLoginResponse(token = jwt, jarId = jarId), HttpStatus.OK)
+            return CommonApiResponse<UserLoginResponse>().success(UserLoginResponse(token = jwt, jarId = jarId))
+        } catch (e: Exception) {
+            CommonApiResponse<Unit>().error(e.message)
+        }
     }
 
     @Operation(summary = "유저 토큰 또는 id로 유저 정보 조회")
@@ -52,11 +58,11 @@ class UserController(
     fun getUser(
         authentication: Authentication?,
         @RequestParam(required = false) id: String ?= "",
-    ): ResponseEntity<UserDto?> {
+    ): CommonApiResponse<UserDto> {
         return if (authentication != null) {
-            ResponseEntity(userService.getUser(authentication.name), HttpStatus.OK)
+            CommonApiResponse<UserDto>().success(userService.getUser(authentication.name))
         } else {
-            ResponseEntity(userService.getUser(id!!), HttpStatus.OK)
+            CommonApiResponse<UserDto>().success(userService.getUser(id!!))
         }
     }
 
@@ -64,16 +70,17 @@ class UserController(
     @DeleteMapping
     fun deleteUser(
         authentication: Authentication,
-    ): ResponseEntity<Unit> {
+    ): CommonApiResponse<Unit> {
         userService.deleteUser(authentication.name)
 
-        return ResponseEntity.ok().build()
+        return CommonApiResponse<Unit>().success()
     }
 
     @Operation(summary="유저 가입 시 id 중복 체크")
     @GetMapping("/check")
-    fun validateUserId(@RequestParam id: String): ResponseEntity<Boolean> {
-        return ResponseEntity.ok(userService.validateUserId(id))
+    fun validateUserId(@RequestParam id: String): CommonApiResponse<Pair<String, String>> {
+        return CommonApiResponse<Pair<String, String>>()
+            .success("success" to userService.validateUserId(id).toString())
     }
 
 }
