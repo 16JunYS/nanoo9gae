@@ -54,6 +54,7 @@ fun Capsule.toDto() = CapsuleDto(
 )
 
 fun Capsule.toDetailDto() = CapsuleDetailDto(
+    capsuleId = this.capsuleId,
     authorNickname = this.authorNickname,
     authorId = this.authorId,
     content = this.content,

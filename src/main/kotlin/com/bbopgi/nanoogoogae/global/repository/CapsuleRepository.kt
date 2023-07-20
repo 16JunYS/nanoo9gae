@@ -1,7 +1,9 @@
 package com.bbopgi.nanoogoogae.global.repository
 
 import com.bbopgi.nanoogoogae.global.entity.Capsule
+import org.springframework.data.mongodb.repository.Aggregation
 import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.data.mongodb.repository.Query
 
 interface CapsuleRepository: MongoRepository<Capsule, String> {
 
@@ -16,4 +18,11 @@ interface CapsuleRepository: MongoRepository<Capsule, String> {
     fun deleteByCapsuleId(capsuleId: String)
 
     fun deleteByJarId(jarId: String)
+
+    @Aggregation(pipeline = [
+        "{'\$match': {'is_read': false}}",
+//        "{'\$rand': {}}",
+        "{'\$sample': {size: 1}}"
+    ])
+    fun findRandomCapsuleId(jarId: String): List<Capsule>
 }

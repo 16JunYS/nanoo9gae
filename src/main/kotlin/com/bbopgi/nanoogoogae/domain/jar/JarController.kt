@@ -65,6 +65,27 @@ class JarController(
             .success(capsuleService.readCapsule(capsuleId, authentication.name))
     }
 
+    @Operation(
+        summary = "랜덤 캡슐 상세 조회 API",
+        responses = [
+            ApiResponse(responseCode = "200", description = "해당 캡슐 정보 반환"),
+            ApiResponse(responseCode = "401", description = "로그인 필요"),
+        ]
+    )
+    @ApiResponse(responseCode = "200")
+    @GetMapping("/{jarId}/random")
+    fun readRandomCapsule(
+        authentication: Authentication?,
+        @PathVariable jarId: String,
+    ): CommonApiResponse<CapsuleDetailDto> {
+        if (authentication == null) {
+            return CommonApiResponse<CapsuleDetailDto>()
+                .error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
+        }
+        return CommonApiResponse<CapsuleDetailDto>()
+            .success(capsuleService.readRandomCapsule(jarId, authentication.name))
+    }
+
     @PostMapping("/{jarId}/{capsuleId}/reply")
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
     fun replyCapsule(

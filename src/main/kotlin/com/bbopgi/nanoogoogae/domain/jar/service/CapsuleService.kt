@@ -76,7 +76,7 @@ class CapsuleService(
         return ret.capsuleId
     }
 
-    fun readCapsule(capsuleId: String, userId: String): CapsuleDetailDto {
+    fun readCapsule(capsuleId: String, userId: String, isRandom: Boolean = false): CapsuleDetailDto {
         val capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
 
         // Capsule owner reads the capsule
@@ -86,7 +86,7 @@ class CapsuleService(
             if (user.coin < 2) {
                 throw NanoogoogaeException("코인이 부족합니다.")
             }
-            user.coin -= 2
+            user.coin -= if (isRandom) 1 else 2
             userRepository.save(user)
             capsule.isRead = true
             capsuleRepository.save(capsule)
@@ -99,6 +99,16 @@ class CapsuleService(
         }
 
         return capsule.toDetailDto()
+    }
+
+    fun readRandomCapsule(jarId: String, userId: String): CapsuleDetailDto {
+        val randomCapsules = capsuleRepository.findRandomCapsuleId(jarId)
+
+        if (randomCapsules.isEmpty()) {
+            throw NanoogoogaeException("읽을 캡슐이 없습니다.")
+        }
+
+        return readCapsule(randomCapsules[0].capsuleId, userId, true)
     }
 
     fun deleteCapsule(capsuleId: String) {

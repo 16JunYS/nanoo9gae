@@ -6,6 +6,8 @@ import java.util.Date
 
 @Schema(description = "캡슐 상세 정보")
 data class CapsuleDetailDto(
+    var capsuleId: String,
+
     @field:Schema(description = "작성 유저 닉네임", example = "anonymous_user")
     var authorNickname: String,
 
