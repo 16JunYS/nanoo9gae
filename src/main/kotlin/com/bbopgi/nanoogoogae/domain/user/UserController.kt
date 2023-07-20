@@ -83,9 +83,16 @@ class UserController(
 
     @Operation(summary="유저 가입 시 id 중복 체크")
     @GetMapping("/check")
-    fun validateUserId(@RequestParam id: String): CommonApiResponse<*> {
-        return CommonApiResponse<Any>()
+    fun validateDuplicate(
+        @RequestParam(required = false) id: String?,
+       @RequestParam(required = false) nickname: String?
+    ): CommonApiResponse<*> {
+        return if (id != null) CommonApiResponse<Any>()
             .success(Serializer().buildMap("success" to userService.validateUserId(id)))
+        else if (nickname != null) CommonApiResponse<Any>()
+            .success(Serializer().buildMap("success" to userService.validateNickname(nickname)))
+        else
+            CommonApiResponse<Any>().error("id 또는 nickname을 입력해주세요.")
     }
 
 }

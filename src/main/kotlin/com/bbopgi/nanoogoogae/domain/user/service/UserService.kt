@@ -38,8 +38,12 @@ class UserService(
         return userRepository.findByUserId(userId) == null
     }
 
+    fun validateNickname(userNickname: String): Boolean {
+        return userRepository.findByNickname(userNickname) == null
+    }
+
     fun createUser(payload: UserCreatePayload): String? {
-        if (!validateUserId(payload.userId)) {
+        if (!validateUserId(payload.userId) || !validateNickname(payload.nickname)) {
             return null
         }
 

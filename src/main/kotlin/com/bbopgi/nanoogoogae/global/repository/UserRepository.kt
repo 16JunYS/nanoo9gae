@@ -11,4 +11,6 @@ interface UserRepository: MongoRepository<User, String> {
 
     fun deleteByUserId(userId: String)
 
+    fun findByNickname(nickname: String): User?
+
 }
