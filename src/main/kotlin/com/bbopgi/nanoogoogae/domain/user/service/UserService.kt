@@ -39,12 +39,15 @@ class UserService(
     }
 
     fun validateNickname(userNickname: String): Boolean {
-        return userRepository.findByNickname(userNickname) == null
+        return userRepository.findByNickname(userNickname).isEmpty()
     }
 
-    fun createUser(payload: UserCreatePayload): String? {
-        if (!validateUserId(payload.userId) || !validateNickname(payload.nickname)) {
-            return null
+    fun createUser(payload: UserCreatePayload): String {
+        if (!validateUserId(payload.userId)) {
+            throw NanoogoogaeException("이미 존재하는 아이디입니다")
+        }
+        if (!validateNickname(payload.nickname)) {
+            throw NanoogoogaeException("이미 존재하는 닉네임입니다")
         }
 
         val jarId = jarService.createJar(

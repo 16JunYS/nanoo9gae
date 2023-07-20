@@ -30,8 +30,6 @@ class UserController(
     @PostMapping
     fun createAccount(@RequestBody payload: UserCreatePayload): CommonApiResponse<*> {
         val jarId = userService.createUser(payload)
-            ?: return CommonApiResponse<Unit>()
-                .error("이미 존재하는 아이디입니다.")
 
         return CommonApiResponse<Any>()
             .created(Serializer().buildMap("id" to jarId))
