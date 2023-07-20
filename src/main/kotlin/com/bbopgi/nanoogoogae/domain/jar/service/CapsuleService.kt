@@ -77,17 +77,25 @@ class CapsuleService(
     }
 
     fun readCapsule(capsuleId: String, userId: String): CapsuleDetailDto {
-        var capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
-        capsule.isRead = true
-        capsuleRepository.save(capsule)
+        val capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
 
+        // Capsule owner reads the capsule
         if (jarRepository.findByJarId(capsule.jarId)!!.userId == userId) {
-            var user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
-            user.coin--
+            val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
+
+            if (user.coin < 2) {
+                throw NanoogoogaeException("코인이 부족합니다.")
+            }
+            user.coin -= 2
             userRepository.save(user)
+            capsule.isRead = true
+            capsuleRepository.save(capsule)
         }
-        else if (capsule.authorId != userId) {
-            throw NanoogoogaeException("권한이 없습니다.")
+        else if (!capsule.isRead && capsule.authorId != userId) {
+            throw NanoogoogaeException("뽑기통 주인이 읽지 않았습니다.")
+        }
+        else if (capsule.isRead && !capsule.isPublic && capsule.authorId != userId) {
+            throw NanoogoogaeException("비공개인 편지입니다.")
         }
 
         return capsule.toDetailDto()
