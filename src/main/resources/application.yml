@@ -1,7 +1,6 @@
 spring:
-  config:
-    activate:
-      on-profile: prod
+#  profiles:
+#    active: local
   data:
     mongodb:
       uri: ${NANOOGOOGAE_MONGODB_URI}
