@@ -1,11 +1,42 @@
 spring:
-  profiles:
-    active: local
-
----
+  config:
+    activate:
+      on-profile: prod
+  data:
+    mongodb:
+      uri: ${NANOOGOOGAE_MONGODB_URI}
+      database: ${NANOOGOOGAE_MONGODB_DATABASE}
+  devtools:
+    remote:
+      restart:
+        enabled: true
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+jwt:
+  secret:
+    key: ${NANOOGOOGAE_JWT_SECRET_KEY}
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    BasicAuth:
+      type: http
+      scheme: basic
+security:
+  - BearerAuth: []
 
 
 
