@@ -31,19 +31,15 @@ jobs:
 
       - name: Upload Docker Image Latest
         uses: docker/build-push-action@v2
-        env:
-          NANOOGOOGAE_JWT_SECRET_KEY: ${{ secrets.NANOOGOOGAE_JWT_SECRET_KEY }}
-          NANOOGOOGAE_MONGODB_DATABASE: ${{ secrets.NANOOGOOGAE_MONGODB_DATABASE }}
-          NANOOGOOGAE_MONGODB_URI: ${{ secrets.NANOOGOOGAE_MONGODB_URI }}
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.SERVICE }}:latest
           build-args: |
-            NANOOGOOGAE_JWT_SECRET_KEY=${NANOOGOOGAE_JWT_SECRET_KEY}
-            NANOOGOOGAE_MONGODB_DATABASE=${NANOOGOOGAE_MONGODB_DATABASE}
-            NANOOGOOGAE_MONGODB_URI=${NANOOGOOGAE_MONGODB_URI}
+            NANOOGOOGAE_JWT_SECRET_KEY=${{ secrets.NANOOGOOGAE_JWT_SECRET_KEY }}
+            NANOOGOOGAE_MONGODB_DATABASE=${{ secrets.NANOOGOOGAE_MONGODB_DATABASE }}
+            NANOOGOOGAE_MONGODB_URI=${{ secrets.NANOOGOOGAE_MONGODB_URI }}
 
       - name: Upload Docker Image with Tag
         uses: docker/build-push-action@v2
