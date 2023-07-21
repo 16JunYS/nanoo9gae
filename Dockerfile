@@ -11,6 +11,7 @@ ENV NANOOGOOGAE_MONGODB_URI=${NANOOGOOGAE_MONGODB_URI}
 
 # 호스트 머신의 현재 디렉토리의 모든 파일을 Docker 이미지의 /app 디렉토리에 복사합니다.
 COPY . /app
+RUN mkdir -p /tomcat/logs
 
 # 작업 디렉토리를 /app으로 설정합니다.
 WORKDIR /app
