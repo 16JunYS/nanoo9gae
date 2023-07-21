@@ -46,7 +46,7 @@ class JarController(
     @Operation(
         summary = "캡슐 상세 조회 API",
         responses = [
-            ApiResponse(responseCode = "200", description = "해당 캡슐 정보 반환"),
+            ApiResponse(responseCode = "200", description = "캡슐 정보 반환"),
             ApiResponse(responseCode = "401", description = "로그인 필요"),
         ]
     )
