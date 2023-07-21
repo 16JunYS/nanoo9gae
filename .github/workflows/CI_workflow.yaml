@@ -50,16 +50,3 @@ jobs:
       - name: Deploy
         run: |
           echo "Deploy"
-  
-
-  notification:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Slack
-        if: always()
-        uses: 8398a7/action-slack@v3.2.0
-        with:
-          status: ${{job.status}}
-          fields: repo,message,commit,author,action,ref,workflow,job
-          author_name: Github Action Slack
