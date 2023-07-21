@@ -23,4 +23,4 @@ WORKDIR /app/build/libs
 
 EXPOSE 8080
 # 애플리케이션을 실행합니다.
-CMD ["java", "-jar", "nanoogoogae-0.0.1-SNAPSHOT.jar >> /tomcat/logs/nanoo9.log"]
+CMD ["java", "-jar", "nanoogoogae-0.0.1-SNAPSHOT.jar"]
