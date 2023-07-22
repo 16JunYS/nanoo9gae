@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDateTime
-import java.util.Date
 
 @Document(collection = "capsule")
 data class Capsule(
@@ -39,6 +38,9 @@ data class Capsule(
     @Field("reply_from")
     var replyFrom: String? = null,
 
+    @Field("reply_to")
+    var replyTo: String? = null,
+
     var color: String,
 )
 
@@ -64,6 +66,6 @@ fun Capsule.toDetailDto() = CapsuleDetailDto(
     isPublic = this.isPublic,
     isRead = this.isRead,
     type = if (this.replyFrom == null) "normal" else "reply",
-    isReplied = this.replyFrom != null,
+    isReplied = this.replyTo != null,
     color = this.color,
 )

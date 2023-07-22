@@ -2,7 +2,6 @@ package com.bbopgi.nanoogoogae.domain.jar.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
-import java.util.Date
 
 @Schema(description = "캡슐 상세 정보")
 data class CapsuleDetailDto(
@@ -35,6 +34,9 @@ data class CapsuleDetailDto(
 
     @field:Schema(description = "답장을 보낸 경우 true")
     var isReplied: Boolean = false,
+
+    @field:Schema(description = "답장 보낸 편지 내용")
+    var replyCapsule: String? = null,
 
     var color: String,
 )

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 class CapsuleService(
     private val capsuleRepository: CapsuleRepository,
     private val jarRepository: JarRepository,
@@ -46,34 +46,40 @@ class CapsuleService(
     }
 
     fun replyCapsule(
-        fromJarId: String, capsuleId: String, payload: CapsuleSaveRequest,
-        userId: String
+        fromJarId: String, fromCapsuleId: String, payload: CapsuleSaveRequest,
+        fromUserId: String
     ): String? {
-        // [TODO] check if logged user matches with the jar owner
+        if (fromJarId != jarRepository.findByUserId(fromUserId)!!.jarId) {
+            throw NanoogoogaeException("권한이 없습니다.")
+        }
 
-        val fromCapsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
+        val fromCapsule = capsuleRepository.findByCapsuleId(fromCapsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
         if (fromCapsule.authorId == null || fromCapsule.authorId == "") {
-            return null
+            throw NanoogoogaeException("비회원이 보낸 캡슐입니다.")
         }
 
         val replyToUser = userRepository.findByUserId(fromCapsule.authorId!!)!!
+        val capsule = capsuleRepository.insert(
+            Capsule(
+                capsuleId = ObjectId().toString(),
+                jarId = jarRepository.findByUserId(replyToUser.userId)!!.jarId,
+                authorId = fromUserId,
+                authorNickname = payload.authorNickname,
+                content = payload.content,
+                isPublic = payload.isPublic,
+                color = payload.color,
+                replyFrom = fromCapsuleId,
+            )
+        ) ?: throw NanoogoogaeException("캡슐 생성에 실패했습니다.")
 
-        var capsule = Capsule(
-            capsuleId = ObjectId().toString(),
-            jarId = jarRepository.findByUserId(replyToUser.userId)!!.jarId,
-            authorId = userId,
-            authorNickname = payload.authorNickname,
-            content = payload.content,
-            isPublic = payload.isPublic,
-            color = payload.color,
-            replyFrom = capsuleId,
-        )
-        val ret = capsuleRepository.insert(capsule) ?: throw NanoogoogaeException("캡슐 생성에 실패했습니다.")
-        var replyFromUser = userRepository.findByUserId(userId)
+        val replyFromUser = userRepository.findByUserId(fromUserId)
         replyFromUser!!.coin++
         userRepository.save(replyFromUser)
 
-        return ret.capsuleId
+        fromCapsule.replyTo = capsule.capsuleId
+        capsuleRepository.save(fromCapsule)
+
+        return capsule.capsuleId
     }
 
     fun readCapsule(capsuleId: String, userId: String, isRandom: Boolean = false): CapsuleDetailDto {
@@ -88,6 +94,7 @@ class CapsuleService(
             }
             user.coin -= if (isRandom) 1 else 2
             userRepository.save(user)
+
             capsule.isRead = true
             capsuleRepository.save(capsule)
         }
@@ -98,7 +105,12 @@ class CapsuleService(
             throw NanoogoogaeException("비공개인 편지입니다.")
         }
 
-        return capsule.toDetailDto()
+        val capsuleDto = capsule.toDetailDto()
+        if (capsule.replyTo != null) {
+            capsuleDto.replyCapsule = capsuleRepository.findByCapsuleId(capsule.replyTo!!)!!.content
+        }
+
+        return capsuleDto
     }
 
     fun readRandomCapsule(jarId: String, userId: String): CapsuleDetailDto {
