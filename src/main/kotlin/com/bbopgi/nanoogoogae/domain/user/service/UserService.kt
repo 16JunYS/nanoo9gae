@@ -11,6 +11,7 @@ import com.bbopgi.nanoogoogae.global.repository.JarRepository
 import com.bbopgi.nanoogoogae.global.repository.UserRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class UserService(
@@ -22,11 +23,17 @@ class UserService(
 ) {
     private val expiredMs: Long = 1000 * 60 * 60 * 24L
 
-    fun login(id: String, password: String): String {
+    fun login(id: String, password: String): Pair<String, LocalDateTime?> {
         if (!validateIdPw(id, password)) {
             throw NanoogoogaeException("아이디 또는 비밀번호가 일치하지 않습니다.")
         }
-        return JwtUtil.createJwt(id, secretKey, expiredMs)
+
+        val user = userRepository.findByUserId(id)!!
+        val datetime = user.lastLoginAt
+        user.lastLoginAt = LocalDateTime.now()
+        userRepository.save(user)
+
+        return JwtUtil.createJwt(id, secretKey, expiredMs) to datetime
     }
 
     fun getUser(userId: String): UserPublicDto {

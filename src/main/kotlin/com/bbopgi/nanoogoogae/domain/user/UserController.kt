@@ -38,17 +38,19 @@ class UserController(
     @Operation(
         summary = "로그인",
         responses = [
-        ApiResponse(responseCode = "200", description = "JWT 토큰과 뽑기통 ID 반환"),
+        ApiResponse(responseCode = "200", description = "JWT 토큰과 뽑기통 ID, 마지막 로그인 시각 반환"),
 //        ApiResponse(responseCode = "401", description = "로그인 실패"),
         ]
     )
     @PostMapping("/login")
     fun login(@RequestBody payload: UserLoginRequest): CommonApiResponse<*> {
         return try {
-            val jwt = userService.login(payload.id, payload.password)
+            val (jwt, lastLoginAt) = userService.login(payload.id, payload.password)
             val jarId = jarService.getJarIdByUserId(payload.id)
 
-            return CommonApiResponse<UserLoginResponse>().success(UserLoginResponse(token = jwt, jarId = jarId))
+            return CommonApiResponse<UserLoginResponse>().success(
+                UserLoginResponse(token = jwt, jarId = jarId, lastLoginAt = lastLoginAt)
+            )
         } catch (e: Exception) {
             CommonApiResponse<Unit>().error(e.message)
         }
@@ -81,7 +83,7 @@ class UserController(
 
     @Operation(summary="유저 가입 시 id 중복 체크")
     @GetMapping("/check")
-    fun validateDuplicate(
+    fun validateDuplicateId(
         @RequestParam(required = false) id: String?,
        @RequestParam(required = false) nickname: String?
     ): CommonApiResponse<*> {
@@ -92,5 +94,7 @@ class UserController(
         else
             CommonApiResponse<Any>().error("id 또는 nickname을 입력해주세요.")
     }
+
+
 
 }

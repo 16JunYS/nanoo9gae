@@ -2,6 +2,7 @@ package com.bbopgi.nanoogoogae.domain.user.dto
 
 import com.bbopgi.nanoogoogae.global.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 data class UserDto(
     var userId: String,
@@ -23,6 +24,8 @@ data class UserDto(
     var coin: Int = 5,
 
     var jarId: String,
+
+    var lastLoginAt: LocalDateTime? = null,
 )
 
 

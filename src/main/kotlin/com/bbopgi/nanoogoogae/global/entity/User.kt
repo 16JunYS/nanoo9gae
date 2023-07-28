@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
+import java.time.LocalDateTime
 
 @Document(collection = "user")
 data class User(
@@ -31,6 +32,9 @@ data class User(
 
     @Field("jar_id")
     var jarId: String,
+
+    @Field("last_login_at")
+    var lastLoginAt: LocalDateTime? = null,
 )
 
 fun User.toDto() = UserDto(
@@ -40,6 +44,7 @@ fun User.toDto() = UserDto(
     phoneNumber = this.phoneNumber,
     coin = this.coin,
     jarId = this.jarId,
+    lastLoginAt = this.lastLoginAt,
 )
 
 fun User.toPublicDto() = UserPublicDto(
@@ -48,4 +53,5 @@ fun User.toPublicDto() = UserPublicDto(
     phoneNumber = this.phoneNumber,
     coin = this.coin,
     jarId = this.jarId,
+    lastLoginAt = this.lastLoginAt,
 )
