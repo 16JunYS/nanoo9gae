@@ -23,8 +23,8 @@ data class Capsule(
     @Field("created_at")
     var createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Field("emoji_reply")
-    var emojiReply: String?=null,
+    @Field("emoji")
+    var emoji: Int? = null,
 
     @Field("jar_id")
     var jarId: String,
@@ -48,7 +48,7 @@ fun Capsule.toDto() = CapsuleDto(
     capsuleId = this.capsuleId,
     authorNickname = this.authorNickname,
     createdAt = this.createdAt,
-    emojiReply = this.emojiReply,
+    emoji = this.emoji,
     isPublic = this.isPublic,
     isRead = this.isRead,
     type = if (this.replyFrom == null) "normal" else "reply",
@@ -61,7 +61,7 @@ fun Capsule.toDetailDto() = CapsuleDetailDto(
     authorId = this.authorId,
     content = this.content,
     createdAt = this.createdAt,
-    emojiReply = this.emojiReply,
+    emoji = this.emoji,
     jarId = this.jarId,
     isPublic = this.isPublic,
     isRead = this.isRead,

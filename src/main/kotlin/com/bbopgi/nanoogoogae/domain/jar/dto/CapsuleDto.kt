@@ -11,7 +11,7 @@ data class CapsuleDto(
 
     var createdAt: LocalDateTime,
 
-    var emojiReply: String?,
+    var emoji: Int?,
 
     @field:Schema(description = "편지 공개/비공개 유무", example = "true (공개인 경우)")
     var isPublic: Boolean,

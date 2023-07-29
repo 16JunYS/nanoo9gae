@@ -72,6 +72,7 @@ class CapsuleService(
             )
         ) ?: throw NanoogoogaeException("캡슐 생성에 실패했습니다.")
 
+        /* Add 1 coin for the jar owner*/
         val replyFromUser = userRepository.findByUserId(fromUserId)
         replyFromUser!!.coin++
         userRepository.save(replyFromUser)
@@ -80,6 +81,20 @@ class CapsuleService(
         capsuleRepository.save(fromCapsule)
 
         return capsule.capsuleId
+    }
+
+    fun replyEmoji(jarId: String, capsuleId: String, userId: String, emoji: Int) {
+        if (userId != jarRepository.findByJarId(jarId)!!.userId) {
+            throw NanoogoogaeException("캡슐 주인만 이모지 답장이 가능합니다.")
+        }
+
+        if (emoji < 1 || emoji > 4) {
+            throw NanoogoogaeException("잘못된 값입니다.")
+        }
+
+        val capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
+        capsule.emoji = emoji
+        capsuleRepository.save(capsule)
     }
 
     fun readCapsule(capsuleId: String, userId: String, isRandom: Boolean = false): CapsuleDetailDto {

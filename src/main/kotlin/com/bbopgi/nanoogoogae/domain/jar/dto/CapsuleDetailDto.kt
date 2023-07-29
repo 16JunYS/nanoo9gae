@@ -18,7 +18,7 @@ data class CapsuleDetailDto(
     var createdAt: LocalDateTime,
 
     @field:Schema(description = "이모지 반응")
-    var emojiReply: String?,
+    var emoji: Int? = null,
 
     @field:Schema(description = "편지(뽑기) 담긴 뽑기통 jarID")
     var jarId: String,
@@ -35,7 +35,7 @@ data class CapsuleDetailDto(
     @field:Schema(description = "답장을 보낸 경우 true")
     var isReplied: Boolean = false,
 
-    @field:Schema(description = "답장 보낸 편지 내용")
+    @field:Schema(description = "본 캡슐에 대해 답장 보낸 편지 내용")
     var replyCapsule: String? = null,
 
     var color: String,

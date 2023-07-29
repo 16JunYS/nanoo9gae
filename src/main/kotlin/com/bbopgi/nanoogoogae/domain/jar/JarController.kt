@@ -1,6 +1,7 @@
 package com.bbopgi.nanoogoogae.domain.jar
 
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleDetailDto
+import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleEmojiRequest
 import com.bbopgi.nanoogoogae.domain.jar.dto.CapsuleSaveRequest
 import com.bbopgi.nanoogoogae.domain.jar.service.CapsuleService
 import com.bbopgi.nanoogoogae.domain.jar.dto.JarDto
@@ -25,6 +26,7 @@ class JarController(
     fun get(@PathVariable jarId: String): CommonApiResponse<JarDto> {
         return CommonApiResponse<JarDto>().success(jarService.getJar(jarId))
     }
+
     /* Capsule Controllers*/
     @PostMapping("/{jarId}")
     @Operation(summary = "편지 작성 API. returns capsule id")
@@ -41,6 +43,34 @@ class JarController(
         } catch (e: Exception) {
             CommonApiResponse<Unit>().error(e.message)
         }
+    }
+
+    @PostMapping("/{jarId}/{capsuleId}/reply")
+    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
+    fun replyCapsule(
+        authentication: Authentication,
+        @PathVariable jarId: String,
+        @PathVariable capsuleId: String,
+        @RequestBody payload: CapsuleSaveRequest
+    ): CommonApiResponse<*> {
+        val id = capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
+
+        return CommonApiResponse<Any>()
+            .success(Serializer().buildMap("id" to id))
+    }
+
+    @Operation(
+        summary = "이모티콘 답장 API",
+    )
+    @PostMapping("/{jarId}/{capsuleId}/reply/emoji")
+    fun replyEmoji(
+        authentication: Authentication,
+        @PathVariable jarId: String,
+        @PathVariable capsuleId: String,
+        @RequestBody payload: CapsuleEmojiRequest,
+    ): CommonApiResponse<*> {
+        capsuleService.replyEmoji(jarId, capsuleId,authentication.name, payload.emoji)
+        return CommonApiResponse<Unit>().success()
     }
 
     @Operation(
@@ -84,20 +114,6 @@ class JarController(
         }
         return CommonApiResponse<CapsuleDetailDto>()
             .success(capsuleService.readRandomCapsule(jarId, authentication.name))
-    }
-
-    @PostMapping("/{jarId}/{capsuleId}/reply")
-    @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
-    fun replyCapsule(
-        authentication: Authentication,
-        @PathVariable jarId: String,
-        @PathVariable capsuleId: String,
-        @RequestBody payload: CapsuleSaveRequest
-    ): CommonApiResponse<*> {
-        val id = capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
-
-        return CommonApiResponse<Any>()
-            .success(Serializer().buildMap("id" to id))
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")
