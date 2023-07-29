@@ -48,11 +48,15 @@ class JarController(
     @PostMapping("/{jarId}/{capsuleId}/reply")
     @Operation(summary = "답장하기 버튼을 통한 편지 작성 API")
     fun replyCapsule(
-        authentication: Authentication,
+        authentication: Authentication?,
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
         @RequestBody payload: CapsuleSaveRequest
     ): CommonApiResponse<*> {
+        if (authentication == null) {
+            return CommonApiResponse<Unit>().error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
+        }
+
         val id = capsuleService.replyCapsule(jarId, capsuleId, payload, authentication.name)
 
         return CommonApiResponse<Any>()
@@ -64,12 +68,16 @@ class JarController(
     )
     @PostMapping("/{jarId}/{capsuleId}/reply/emoji")
     fun replyEmoji(
-        authentication: Authentication,
+        authentication: Authentication?,
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
         @RequestBody payload: CapsuleEmojiRequest,
     ): CommonApiResponse<*> {
-        capsuleService.replyEmoji(jarId, capsuleId,authentication.name, payload.emoji)
+        if (authentication == null) {
+            return CommonApiResponse<Unit>().error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
+        }
+
+        capsuleService.replyEmoji(jarId, capsuleId,authentication.name, payload.emoji as Int)
         return CommonApiResponse<Unit>().success()
     }
 
@@ -87,12 +95,8 @@ class JarController(
         @PathVariable jarId: String,
         @PathVariable capsuleId: String,
     ): CommonApiResponse<CapsuleDetailDto> {
-        if (authentication == null) {
-            return CommonApiResponse<CapsuleDetailDto>()
-                .error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
-        }
         return CommonApiResponse<CapsuleDetailDto>()
-            .success(capsuleService.readCapsule(capsuleId, authentication.name))
+            .success(capsuleService.readCapsule(capsuleId, authentication?.name))
     }
 
     @Operation(
@@ -108,12 +112,8 @@ class JarController(
         authentication: Authentication?,
         @PathVariable jarId: String,
     ): CommonApiResponse<CapsuleDetailDto> {
-        if (authentication == null) {
-            return CommonApiResponse<CapsuleDetailDto>()
-                .error(HttpStatus.UNAUTHORIZED.value(), "로그인이 필요합니다.")
-        }
         return CommonApiResponse<CapsuleDetailDto>()
-            .success(capsuleService.readRandomCapsule(jarId, authentication.name))
+            .success(capsuleService.readRandomCapsule(jarId, authentication?.name))
     }
 
     @DeleteMapping("/{jarId}/{capsuleId}")

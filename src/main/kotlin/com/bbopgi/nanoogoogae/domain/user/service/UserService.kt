@@ -21,7 +21,7 @@ class UserService(
     @Value("\${jwt.secret.key}")
     private var secretKey: String = "",
 ) {
-    private val expiredMs: Long = 1000 * 60 * 60 * 24L
+    private val expiredMs: Long = 1000 * 60 * 60 * 24 * 30L
 
     fun login(id: String, password: String): Pair<String, LocalDateTime?> {
         if (!validateIdPw(id, password)) {

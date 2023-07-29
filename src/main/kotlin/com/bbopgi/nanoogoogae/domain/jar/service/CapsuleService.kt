@@ -62,6 +62,10 @@ class CapsuleService(
             throw NanoogoogaeException("비회원이 보낸 캡슐입니다.")
         }
 
+        if (fromCapsule.replyTo != null) {
+            throw NanoogoogaeException("이미 답장을 보낸 캡슐입니다.")
+        }
+
         val replyToUser = userRepository.findByUserId(fromCapsule.authorId!!)!!
         val capsule = capsuleRepository.insert(
             Capsule(
@@ -101,11 +105,12 @@ class CapsuleService(
         capsuleRepository.save(capsule)
     }
 
-    fun readCapsule(capsuleId: String, userId: String, isRandom: Boolean = false): CapsuleDetailDto {
+    fun readCapsule(capsuleId: String, userId: String?, isRandom: Boolean = false): CapsuleDetailDto {
         val capsule = capsuleRepository.findByCapsuleId(capsuleId) ?: throw NanoogoogaeException("존재하지 않는 캡슐입니다.")
+        val jar = jarRepository.findByJarId(capsule.jarId) ?: throw NanoogoogaeException("존재하지 않는 뽑기통입니다.")
 
         // Capsule owner reads the capsule
-        if (!capsule.isRead && capsule.authorId != userId) {
+        if (!capsule.isRead && !(capsule.authorId == userId || jar.userId == userId)) {
             throw NanoogoogaeException("뽑기통 주인이 읽지 않았습니다.")
         }
 
@@ -113,7 +118,7 @@ class CapsuleService(
             throw NanoogoogaeException("비공개인 편지입니다.")
         }
 
-        if (!capsule.isRead && jarRepository.findByJarId(capsule.jarId)!!.userId == userId) {
+        if (!capsule.isRead && jar.userId == userId) {
             val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
 
             if (user.coin < 2) {
@@ -134,7 +139,7 @@ class CapsuleService(
         return capsuleDto
     }
 
-    fun readRandomCapsule(jarId: String, userId: String): CapsuleDetailDto {
+    fun readRandomCapsule(jarId: String, userId: String?): CapsuleDetailDto {
         val (randomCapsules, isRandom) = if (jarRepository.findByJarId(jarId)!!.userId != userId) {
             capsuleRepository.findReadRandomCapsules(jarId) to false
         } else {
@@ -142,7 +147,7 @@ class CapsuleService(
         }
 
         if (randomCapsules.isEmpty()) {
-            throw NanoogoogaeException("읽을 캡슐이 없습니다.")
+            throw NanoogoogaeException("캡슐이 없습니다!")
         }
         val randomIdx = (randomCapsules.indices).random()
 
