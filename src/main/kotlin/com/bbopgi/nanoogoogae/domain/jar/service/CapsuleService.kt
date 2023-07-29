@@ -116,13 +116,18 @@ class CapsuleService(
     }
 
     fun readRandomCapsule(jarId: String, userId: String): CapsuleDetailDto {
-        val randomCapsules = capsuleRepository.findRandomCapsuleId(jarId)
+        val (randomCapsules, isRandom) = if (jarRepository.findByJarId(jarId)!!.userId != userId) {
+            capsuleRepository.findReadRandomCapsules(jarId) to false
+        } else {
+            capsuleRepository.findUnreadRandomCapsules(jarId) to true
+        }
+
         if (randomCapsules.isEmpty()) {
             throw NanoogoogaeException("읽을 캡슐이 없습니다.")
         }
         val randomIdx = (randomCapsules.indices).random()
 
-        return readCapsule(randomCapsules[randomIdx].capsuleId, userId, true)
+        return readCapsule(randomCapsules[randomIdx].capsuleId, userId, isRandom)
     }
 
     fun deleteCapsule(capsuleId: String) {

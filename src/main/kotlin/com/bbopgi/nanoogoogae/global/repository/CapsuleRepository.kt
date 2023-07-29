@@ -22,5 +22,12 @@ interface CapsuleRepository: MongoRepository<Capsule, String> {
         // [TODO] sample works when collection contains over 100 documents
 //        "{'\$sample': {size: 1}}"
     ])
-    fun findRandomCapsuleId(jarId: String): List<Capsule>
+    fun findUnreadRandomCapsules(jarId: String): List<Capsule>
+
+    @Aggregation(pipeline = [
+        "{'\$match': {'jar_id': ?0}}",
+        "{'\$match': {'is_read': true}}",
+        "{'\$match': {'is_public': true}}",
+    ])
+    fun findReadRandomCapsules(jarId: String): List<Capsule>
 }
