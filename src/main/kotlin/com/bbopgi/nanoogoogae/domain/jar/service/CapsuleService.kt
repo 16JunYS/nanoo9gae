@@ -20,6 +20,10 @@ class CapsuleService(
     private val userRepository: UserRepository,
 ) {
     fun createCapsule(payload: CapsuleSaveRequest, jarId: String, userId: String?): String {
+        if (userId == jarRepository.findByJarId(jarId)?.userId) {
+            throw NanoogoogaeException("자신의 뽑기통에는 캡슐을 넣을 수 없습니다.")
+        }
+
         var capsuleId = ObjectId().toString()
         while(capsuleRepository.findByCapsuleId(capsuleId) != null) {
             capsuleId = ObjectId().toString()
