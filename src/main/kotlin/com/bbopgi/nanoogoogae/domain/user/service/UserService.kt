@@ -30,14 +30,21 @@ class UserService(
 
         val user = userRepository.findByUserId(id)!!
         val datetime = user.lastLoginAt
-        user.lastLoginAt = LocalDateTime.now()
-        userRepository.save(user)
+        if (user.lastLoginAt != null) {
+            user.lastLoginAt = LocalDateTime.now()
+            userRepository.save(user)
+        }
 
         return JwtUtil.createJwt(id, secretKey, expiredMs) to datetime
     }
 
     fun getUser(userId: String): UserPublicDto {
         val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
+        if (user.lastLoginAt == null) {
+            user.lastLoginAt = LocalDateTime.now()
+            userRepository.save(user)
+        }
+
         return user.toPublicDto()
     }
 
