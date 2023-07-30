@@ -121,10 +121,11 @@ class CapsuleService(
         if (!capsule.isRead && jar.userId == userId) {
             val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
 
-            if (user.coin < 2) {
+            user.coin -= if (isRandom) 1 else 2
+            if (user.coin < 0) {
                 throw NanoogoogaeException("코인이 부족합니다.")
             }
-            user.coin -= if (isRandom) 1 else 2
+
             userRepository.save(user)
 
             capsule.isRead = true
