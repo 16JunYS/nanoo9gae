@@ -40,12 +40,14 @@ class UserService(
 
     fun getUser(userId: String): UserPublicDto {
         val user = userRepository.findByUserId(userId) ?: throw NanoogoogaeException("존재하지 않는 유저입니다.")
+        val userDto = user.toPublicDto()
+
         if (user.lastLoginAt == null) {
             user.lastLoginAt = LocalDateTime.now()
             userRepository.save(user)
         }
 
-        return user.toPublicDto()
+        return userDto
     }
 
     fun validateUserId(userId: String): Boolean {
